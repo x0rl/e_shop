@@ -1,0 +1,84 @@
+.layout_table {
+  margin: auto;
+  width: 35%;
+}
+.header {
+  text-align: right;
+  padding: 2%;
+  height: 80px;
+}
+.footer {
+}
+.sidebar {
+  height: 350px;
+  width: 200px;
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+}
+.sidebar ul{
+  margin: 0; 
+  padding: 0px;
+  list-style-position: inside
+}
+.content {
+  text-align: center;
+}
+.content_table {
+  margin: auto;
+}
+.content_table td {
+  width: 200px;
+  border: 1px double black;
+  padding: 10px;
+}
+.content_table_index_php {
+  border-spacing: 0;
+  padding: 5%;
+  margin: auto;
+}
+.content_table_index_php td {
+  padding: 5px;
+}
+.registration_body_table {
+  margin: auto;
+}
+.personal_area_table {
+  margin: auto;
+  padding: 5px;
+}
+.personal_area_table td {
+  margin: auto;
+  border: 1px double black;
+  padding: 10px;
+}
+/* Dropdown Button */
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  /*position: absolute;*/
+  float: right;
+  border: 1px;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  border: 1px double black;
+  padding: 5px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
