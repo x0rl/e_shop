@@ -157,7 +157,7 @@
       if (!Auth::check())
         $userShoppingCart = $request->session()->get('userShoppingCart', []); //todo
       else
-        $userShoppingCart = shopCart::where('user_id', Auth::user()['id'])->pluck('product_id')->all();
+        $userShoppingCart = shopCart::where('user_id', Auth::user()['id'])->pluck('product_id')->all(); //todo в представлении productsListPage теперь лишняя проверка auth::check
       return view('e_shop.productsListPage', [
         'products'=>$products,
         'userShoppingCart'=>$userShoppingCart,
