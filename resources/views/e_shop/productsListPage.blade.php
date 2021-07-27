@@ -66,20 +66,11 @@
             <td>{{$product['price']}}</td>
             <td>{{$product['quantity'] == 0 ? 'Нет в наличии' : $product['quantity']}}</td>
             <td>
-              @if (!Auth::check())
-                @if (in_array($product['id'], array_column($userShoppingCart, 'id')))
-                  В корзине<br>
-                  <a href='?page={{$products->currentPage()}}&id={{$product["id"]}}&action=delFromCart'>Удалить из корзины</a>
-                @else
-                  <a href='?page={{$products->currentPage()}}&id={{$product["id"]}}&action=addToCart'>В&nbsp;корзину</a>
-                @endif
+              @if (in_array($product['id'], $userShoppingCart))
+                В корзине<br>
+                <a href='/ShoppingCart/delete/{{$product['id']}}'>Удалить из корзины</a>
               @else
-                @if (in_array($product['id'], $userShoppingCart, 'id'))
-                  В корзине<br>
-                  <a href='?page={{$products->currentPage()}}&id={{$product["id"]}}&action=delFromCart'>Удалить из корзины</a>
-                @else
-                  <a href='?page={{$products->currentPage()}}&id={{$product["id"]}}&action=addToCart'>В&nbsp;корзину</a>
-                @endif
+                <a href='/ShoppingCart/add/{{$product['id']}}'>В&nbsp;корзину</a>
               @endif
             </td>
           </tr>

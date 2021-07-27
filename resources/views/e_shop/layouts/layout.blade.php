@@ -28,6 +28,7 @@
           @include('e_shop.layouts.sidebar')
         </td>
         <td class="content">
+          {{session('message')}}
           @if (isset($message))
             <div style="width: 100%; margin: auto" class="alert fade show alert-dismissible alert-{{$message['type']}}" role="alert">
               {{$message['text']}}

@@ -29,7 +29,7 @@
               </td>
               <td class="align-middle">{{$item->product['price']}}</td>
               <td class="align-middle">{{$item->product['quantity']}}</td>
-              <td class="align-middle"><a href='?delete={{$item->product["id"]}}'>Удалить из корзины</a></td>
+              <td class="align-middle"><a href='/ShoppingCart/delete/{{$item->product["id"]}}'>Удалить из корзины</a></td>
             </tr>
           @endforeach
           <tr><td colspan="5">{{$shoppingCart->links()}}</td></tr>
@@ -46,7 +46,7 @@
               </td>
               <td class="align-middle">{{$item['product']->price}}</td>
               <td class="align-middle">{{$item['product']->quantity}}</td>
-              <td class="align-middle"><a href='?delete={{$item['product']->id}}'>Удалить из корзины</a></td>
+              <td class="align-middle"><a href='/ShoppingCart/delete/{{$item['product']->id}}'>Удалить из корзины</a></td>
             </tr>
           @endforeach
         @endif

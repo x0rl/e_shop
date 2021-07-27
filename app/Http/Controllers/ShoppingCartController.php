@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ShoppingCartController extends Controller
 {
-  private function isProductInShoppingCart($productId) {
+  public function isProductInShoppingCart($productId) { // todo NOT PUBLIC, PRIVATE. (PageController)
     if (Auth::check()) {
       return shopCart::where('user_id', Auth::user()['id'])->where('product_id', $productId)->first() ? true : false;
     }
@@ -17,21 +17,58 @@ class ShoppingCartController extends Controller
       return in_array($productId, session('userShoppingCart', [])) ? true : false;
     }
   }
-  public function add(Request $request, $productId) {
-    if ($targetProduct = Product::find($productId)) {
-      if (!self::isProductInShoppingCart($productId)) {
-        if (Auth::check()) {
-          $newProduct = new shopCart;
-          $newProduct->user_id = Auth::user('id');
-          $newProduct->product_id = $productId;
-          $newProduct->save();
-          $request->session()->flash('message', 'Добавлено в корзину!');
-          return back();
-        }
-      }
+  public function show(Request $request) {
+    if (Auth::check())
+      $shoppingCart = shopCart::where('user_id', Auth::user()['id'])->paginate(5);
+    else {
+      if ($shoppingCart = $request->session()->get('userShoppingCart'))
+        foreach ($shoppingCart as $key=>$productId)
+          $shoppingCart[$key] = ['id'=>$productId, 'product'=>Product::find($productId)];
     }
-    return back();
+    return view('e_shop.shoppingCart', [
+      'shoppingCart'=>$shoppingCart ?? []
+    ]);
+  }
+  public function add(Request $request, $productId) {
+    $targetProduct = Product::findOrFail($productId);
+    if (self::isProductInShoppingCart($productId)) {
+      $request->session()->flash('message', 'Уже в корзине');
+      return back();
+    }
+    if (Auth::check()) {
+      $newProduct = new shopCart;
+      $newProduct->user_id = Auth::user()['id'];
+      $newProduct->product_id = $productId;
+      $newProduct->save();
+      $request->session()->flash('message', 'Добавлено в корзину!');
+      return back();
+    }
+    else {
+      $request->session()->push('userShoppingCart', $productId);
+      $request->session()->flash('message', 'Добавлено в корзину'); //todo повторяются
+      return back();
+    }
     //return redirect()->route('showCategory', ['page'=>$targetProduct->sub_category_id]);
-
+  }
+  public function delete(Request $request, $productId) {
+    $targetProduct = Product::findOrFail($productId);
+    if (!self::isProductInShoppingCart($productId)) {
+      $request->session()->flash('message', 'Товара нет в вашей корзине');
+      return back();
+    }
+    if (Auth::check()) {
+      shopCart::where('user_id', Auth::user()['id'])->where('product_id', $productId)->delete();
+      $request->session()->flash('message', 'Удалено из корзины');
+      return back();
+    }
+    else {
+      $userShoppingCart = session()->pull('userShoppingCart', []);
+      //if(($key = array_search($id, array_column($userShoppingCart, 'id'))) !== false) {
+      $key = array_search($productId, $userShoppingCart);
+      unset($userShoppingCart[$key]);
+      $request->session()->flash('message', 'Удалено из корзины');
+      session(['userShoppingCart'=>$userShoppingCart]); //todo
+      return back();
+    }
   }
 }

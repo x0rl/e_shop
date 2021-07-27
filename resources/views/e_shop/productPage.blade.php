@@ -22,13 +22,15 @@
       </tr>
       <tr>
         <td colspan="2">
-          <form>
           @if ($inShoppingCart)
-            <button class="btn" type="submit" name="action" value="delFromCart">Удалить из корзины</button>
+            <form action="/ShoppingCart/delete/{{$product['id']}}">
+              <button class="btn" type="submit" name="action" value="delFromCart">Удалить из корзины</button>
+            </form>
           @else
-            <button class="btn" type="submit" name="action" value="addToCart">Добавить в корзину</button>
+            <form action="/ShoppingCart/add/{{$product['id']}}">
+              <button class="btn" type="submit" name="action" value="addToCart">Добавить в корзину</button>
+            </form>
           @endif
-          </form>
         </td>
       </tr>
       @if (Auth::check())
@@ -45,8 +47,6 @@
             </form>
           </td>
         </tr>
-      @endif
-      @if (Auth::check())
         @if (Auth::user()['status'] == 'admin')
           <tr>
             <td colspan="2"><a href="/editProduct/{{$product['id']}}">Редактировать</a></td>
@@ -91,7 +91,8 @@
           @endforelse
           <tr>
             <td colspan="3">
-              <form class="form-inline">
+              <form class="form-inline" method="POST" action="/product/{{$product['id']}}/addComment">
+                @csrf
                 <div class="form-group mx-sm-3 mb-2">
                   <textarea class="form-control" placeholder="Комментарий" style="width: 500px" name="comment"></textarea>
                 </div>
@@ -123,24 +124,25 @@
                 @elseif ($product->reviews()->where('user_id', Auth::user()['id'])->where('product_id', $product['id'])->first())
                   Для управления оставленными отзывами, перейдите в личный кабинет<br>todo<br><br>
                 @else
-                <form class="form-inline">
-                  <div class="form-group mx-sm-3 mb-2">
-                    <textarea class="form-control" placeholder="Отзыв" style="width: 300px" name="addReview"></textarea>
-                  </div>
-                  <div class="input-group mx-sm-3 mb-2">
-                    <div class="input-group-prepend mb-2">
-                      <span class="input-group-text">
-                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-                        </svg>
-                      </span>
+                  <form class="form-inline" action="/product/{{$product['id']}}/addReview" method="POST">
+                    @csrf
+                    <div class="form-group mx-sm-3 mb-2">
+                      <textarea class="form-control" placeholder="Отзыв" style="width: 300px" name="text"></textarea>
                     </div>
-                    <input name="show" value="reviews" hidden>
-                    <input type="number" min="1" max="5" class="form-control mb-2" name="rating">
-                    <input type="submit" class="btn mx-sm-3 btn-primary mb-2">
-                  </div>
+                    <div class="input-group mx-sm-3 mb-2">
+                      <div class="input-group-prepend mb-2">
+                        <span class="input-group-text">
+                          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-star-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                          </svg>
+                        </span>
+                      </div>
+                      <input name="show" value="reviews" hidden>
+                      <input type="number" min="1" max="5" class="form-control mb-2" name="rating">
+                      <input type="submit" class="btn mx-sm-3 btn-primary mb-2">
+                    </div>
 
-                </form>
+                  </form>
                 @endif
                 {{$reviews->links()}}
               </td>

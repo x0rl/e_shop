@@ -23,6 +23,9 @@ Route::get('/about', function() {
   return view('e_shop.about');
 });
 Route::get('/search', 'SearchController@index');
+Route::get('/ShoppingCart', 'ShoppingCartController@show');
+Route::get('/ShoppingCart/delete/{productId}', 'ShoppingCartController@delete');
+Route::get('/ShoppingCart/add/{productId}', 'ShoppingCartController@add');
 
 Route::middleware('IsUserAdmin')->group(function() {
   Route::get('/editProduct/{productId}', 'editProductController@editPage');
@@ -32,15 +35,14 @@ Route::middleware('IsUserAdmin')->group(function() {
   Route::post('/newProduct/add', 'NewProduct@add');
 });
 
-Route::get('/product/{product}', 'PageController@showProduct')->name('showProduct');
+Route::get('/product/{product}', 'ProductController@showProduct')->name('showProduct');
 
 Route::get('/subCategory/{page}', 'PageController@showCategory')->name('showCategory');
-Route::get('/ShoppingCart', 'PersonalAreaController@shoppingCart');
 
 Route::middleware('auth')->group(function() {
+  Route::post('/product/{productId}/addReview', 'ProductController@addReview');
+  Route::post('/product/{productId}/addComment', 'ProductController@addComment');
   Route::post('/buyProduct', 'BuyProductController@showPurchasePage');
-  Route::get('/personal_area/ShoppingCart/add--{product}', 'ShoppingCartController@add');
-  Route::get('/personal_area/shoppingCart', 'PersonalAreaController@shoppingCart');
   Route::get('/personal_area/reviews', 'PersonalAreaController@reviews');
   Route::get('/personal_area/shoppingList', 'PersonalAreaController@shoppingList');
 
