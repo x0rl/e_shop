@@ -2,13 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ShoppingList;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AdminPageController extends Controller
 {
-  public function showAdminPage(Request $request) {
+  public function sales(Request $request) {
+    if ($year = $request->query('year')) {
+      $request->validate([
+        'year'=>'integer|min:2020|max:'.date('Y')
+      ]);
+
+    }
+    else {
+      $year = date('Y');
+
+    }
+    //$sales = ShoppingList::where('YEAR(created_at)', $year)->get();
+    $sales = ShoppingList::whereRaw('YEAR(created_at) = '.$year)
+      ->selectRaw('MONTH(created_at) as month, SUM(price) AS sum')
+      ->groupBy('month')
+      ->get();
+    return view('e_shop.sales', [
+      'year'=>$year,
+      'sales'=>$sales ?? null
+    ]);
+  }
+  public function users(Request $request) {
     //if ($targetUser = $_GET['banUser']) {}
     if ($targetId = $request->query('id')) {
       if ($targetId == Auth::user()['id'])

@@ -19,9 +19,9 @@ class ProductController extends Controller
     else
       $inShoppingList = false;
     if ($request->get('show') === 'reviews')
-      $reviews = $product->reviews()->paginate(5);
+      $reviews = $product->reviews()->paginate(5); //todo сортировку
     else
-      $comments = $product->comments()->paginate(5);
+      $comments = $product->comments()->paginate(5); //todo sort
     return view('e_shop.productPage', [
       'product'=>$product,
       'inShoppingCart'=>app('App\Http\Controllers\ShoppingCartController')->isProductInShoppingCart($productId), //todo трейты, наследование, что угодно пожалуйста когда-нибудь

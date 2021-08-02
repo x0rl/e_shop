@@ -34,9 +34,9 @@
             Админ панель
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="/admin_panel">Список пользователей</a>
+            <a class="dropdown-item" href="/admin_panel/users">Список пользователей</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Продажи</a>
+            <a class="dropdown-item" href="/admin_panel/sales?year={{date('Y')}}">Продажи</a>
           </div>
         </li>
       @endif

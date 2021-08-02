@@ -90,7 +90,7 @@
             <tr><td colspan="2">Комментариев нет. Будьте первыми!</td></tr>
           @endforelse
           <tr>
-            <td colspan="3">
+            <td colspan="3">he
               <form class="form-inline" method="POST" action="/product/{{$product['id']}}/addComment">
                 @csrf
                 <div class="form-group mx-sm-3 mb-2">

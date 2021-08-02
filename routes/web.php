@@ -30,9 +30,10 @@ Route::get('/ShoppingCart/add/{productId}', 'ShoppingCartController@add');
 Route::middleware('IsUserAdmin')->group(function() {
   Route::get('/editProduct/{productId}', 'editProductController@editPage');
 
-  Route::get('/admin_panel', 'adminPageController@showAdminPage');
+  Route::get('/admin_panel/users', 'AdminPageController@users');
   Route::get('/newProduct/{subCategory}', 'NewProduct@showAddPage');
   Route::post('/newProduct/add', 'NewProduct@add');
+  Route::get('/admin_panel/sales', 'AdminPageController@sales');
 });
 
 Route::get('/product/{product}', 'ProductController@showProduct')->name('showProduct');
