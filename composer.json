@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "amocrm/amocrm-api-library": "^0.5.2",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -23,6 +24,9 @@
     },
     "autoload": {
         "psr-4": {
+            "Client\\": "app/AmoCRM/lib/Client/", 
+            "EntitiesServices\\": "app/AmoCRM/lib/EntitiesServices/", 
+            "Models\\": "app/AmoCRM/lib/Models/",
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"

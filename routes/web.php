@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::fallback(function () {
   abort(404);
 });
+Route::get('/amo', 'AmoCRM@test');
 Route::get('/', 'PageController@showMainPage');
 Route::get('/about', function() {
   return view('e_shop.about');
@@ -28,7 +29,7 @@ Route::get('/ShoppingCart/delete/{productId}', 'ShoppingCartController@delete');
 Route::get('/ShoppingCart/add/{productId}', 'ShoppingCartController@add');
 
 Route::middleware('IsUserAdmin')->group(function() {
-  Route::get('/editProduct/{productId}', 'editProductController@editPage');
+  Route::get('/editProduct/{productId}', 'EditProductController@editPage');
 
   Route::get('/admin_panel/users', 'AdminPageController@users');
   Route::get('/newProduct/{subCategory}', 'NewProduct@showAddPage');

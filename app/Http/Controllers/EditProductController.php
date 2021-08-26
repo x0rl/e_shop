@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 
-class editProductController extends Controller
+class EditProductController extends Controller
 {
   public function editPage(Request $request, $productId)
   {
@@ -28,7 +28,7 @@ class editProductController extends Controller
       $targetProduct->price = $request->input('price');
       $targetProduct->quantity = $request->input('quantity');
       $targetProduct->save();
-      $request->session()->flash('message', 'Успешно отредактировано<br><br>');
+      $request->session()->flash('message', 'Успешно отредактировано');
       return redirect()->route('showProduct', ['product'=>$productId]);
     }
     return view('e_shop.editProduct', [

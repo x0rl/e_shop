@@ -33,8 +33,6 @@ class AdminPageController extends Controller
   public function users(Request $request) {
     //if ($targetUser = $_GET['banUser']) {}
     if ($targetId = $request->query('id')) {
-      if ($targetId == Auth::user()['id'])
-        return redirect('/admin_panel');
       $request->validate([
         'id'=>'required|integer',
         'action'=>['required', 'string', 'regex:#ban|unban|upToAdmin|downToUser#']
@@ -50,7 +48,7 @@ class AdminPageController extends Controller
       }
       elseif ($action === 'ban') {
         if ($targetUser['id'] == Auth::user()['id'] or $targetUser['status'] == 'admin')
-          $message = ['type'=>'secondary', 'text'=>'Тут только два правила: нельзя забанить себя (ты долбоеб?) и нельзя забанить админа (ты точно долбоеб)'];
+          $message = ['type'=>'secondary', 'text'=>'Так нельзя'];
         else {
           $targetUser->ban_status = date('d:m:y', time());
           $targetUser->save();
@@ -62,7 +60,7 @@ class AdminPageController extends Controller
         $targetUser->save();
         $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' повышен до админа'];
       }
-      elseif ($action === 'downToUser' and $targetUser->status != 'user') {
+      elseif ($action === 'downToUser' and $targetUser->status != 'user' and $targetUser->id !== Auth::user()['id']) {
         $targetUser->status = 'user';
         $targetUser->save();
         $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' понижен до пользователя'];
