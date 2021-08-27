@@ -6,6 +6,7 @@ use Client\ApiRequest;
 use EntitiesServices\Contacts;
 use EntitiesServices\Leads;
 use EntitiesServices\Companies;
+use App\Models\Token;
 
 class ApiClient 
 {
@@ -18,14 +19,17 @@ class ApiClient
   
   private $apiRequest;
 
-  public function __construct (string $clientId, string $secretKey, string $redirectURI, string $domain = 'tbhas2') 
+  public function __construct ()
   {
-    $this->clientId = $clientId;
-    $this->secretKey = $secretKey;
-    $this->redirectURI = $redirectURI;
-    $this->baseDomain = $domain;
+    $this->clientId = '828adff5-ce83-4f59-8f3b-6e93b9388ee5';
+    $this->secretKey = '0XekCFhLKvJ6DpUD0XOzvnsiyORbn3dCredHp5Y1awzbiOo2kjV8LjCjTkizSl8C';
+    $this->redirectURI = 'https://loca.ru/';
+    $this->baseDomain = 'tbhas2';
     $this->token_file = $_SERVER['DOCUMENT_ROOT'].'/token_info_new.json';
     $this->apiRequest = new ApiRequest();
+    $this->accessToken = json_decode(Token::findOrFail(1)->token, true);
+    if ($this->accessToken['expires_in'] <= time())
+      $this->refreshToken();
   }
   public function leads() 
   {
@@ -68,13 +72,6 @@ class ApiClient
   {
     return $this->accessToken;
   }
-  public function setAccessToken($accessToken) 
-  {
-    $this->accessToken = $accessToken;
-      if ($accessToken['expires_in'] <= time())
-        $this->refreshToken();
-    return $this;
-  }
   public function refreshToken() 
   {
     $data = [
@@ -105,5 +102,8 @@ class ApiClient
       'base_domain' => $this->accessToken['base_domain'],
     ];
     file_put_contents($this->token_file, json_encode($data));
+    $tokenFromBD = Token::findOrFail(1);
+    $tokenFromBD->token = $data;
+    $tokenFromBD->save();
   }
 }
