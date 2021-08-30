@@ -13,7 +13,7 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Redis;
 use App\Models\Token;
 
-class sendToAmoCRM implements ShouldQueue
+class SendToAmoCRM implements ShouldQueue
 {
     use InteractsWithQueue;
     public $connection = 'database';
@@ -39,7 +39,7 @@ class sendToAmoCRM implements ShouldQueue
     public function handle(BuyProduct $event)
     {
         $apiClient = new ApiClient();
-        $accessToken = json_decode(Token::findOrFail(1)->token, true);
+        //$accessToken = json_decode(Token::findOrFail(1)->token, true);
         $contactsService = $apiClient->contacts();
         $leadsService = $apiClient->leads();
         $lead = new Lead();

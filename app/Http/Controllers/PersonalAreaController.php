@@ -9,20 +9,24 @@
   use App\Models\Review;
   use App\Models\ShoppingList;
   
-  class PersonalAreaController extends Controller {
+  class PersonalAreaController extends Controller 
+  {
     private $message = null;
-    public function reviews() {
+    public function reviews() 
+    {
       return view('e_shop.PersonalAreaReviews', [
         'userReviews'=>Review::where('user_id', Auth::user()['id'])->paginate(10)
       ]);
     }
-    public function shoppingList() {
+    public function shoppingList() 
+    {
       $shoppingList = ShoppingList::where('user_id', Auth::user()['id'])
         ->orderBy('created_at', 'desc')
         ->paginate(5);
       return view('e_shop.shoppingList', ['shoppingList'=>$shoppingList]);
     }
-    public function mainPage() {
+    public function mainPage()
+    {
       return view('e_shop.personalArea');
     }
   }

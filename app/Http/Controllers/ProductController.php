@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-  public function showProduct(Request $request, $productId) { //todo в отдельный контроллер
+  public function showProduct(Request $request, $productId) 
+  { //todo в отдельный контроллер
     $product = Product::findOrFail($productId);
     if (Auth::check())
       $inShoppingList = ShoppingList::where('product_id', $productId)->where('user_id', Auth::user()['id'])->first()
@@ -24,13 +25,15 @@ class ProductController extends Controller
       $comments = $product->comments()->paginate(5); //todo sort
     return view('e_shop.productPage', [
       'product'=>$product,
-      'inShoppingCart'=>app('App\Http\Controllers\ShoppingCartController')->isProductInShoppingCart($productId), //todo трейты, наследование, что угодно пожалуйста когда-нибудь
+      //'inShoppingCart'=>app('App\Http\Controllers\ShoppingCartController')->isProductInShoppingCart($productId), //todo хе
+      'inShoppingCart'=>ShoppingCartController::isProductInShoppingCart($productId), 
       'isInShoppingList'=>$inShoppingList,
       'comments'=>$comments ?? null,
       'reviews'=>$reviews ?? null,
     ]);
   }
-  public function addReview(Request $request, $productId) {
+  public function addReview(Request $request, $productId) 
+  {
     $product = Product::findOrFail($productId);
     if (! ShoppingList::where('product_id', $productId)->where('user_id', Auth::user()['id'])) {
       $request->session()->flash('message', 'Приобретите товар чтобы оставить отзыв');
@@ -54,7 +57,8 @@ class ProductController extends Controller
     $request->session()->flash('message', 'Отзыв успешно сохранен');
     return back();
   }
-  public function addComment(Request $request, $productId) {
+  public function addComment(Request $request, $productId) 
+  {
     $request->validate([]); //todo
     $comment = new Comment();
     $comment->product_id = $productId;

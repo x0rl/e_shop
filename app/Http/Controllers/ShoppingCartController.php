@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ShoppingCartController extends Controller
 {
-  public function isProductInShoppingCart($productId) { // todo NOT PUBLIC, PRIVATE. (PageController)
+  public static function isProductInShoppingCart($productId) {
     if (Auth::check()) {
       return shopCart::where('user_id', Auth::user()['id'])->where('product_id', $productId)->first() ? true : false;
     }
@@ -30,7 +30,7 @@ class ShoppingCartController extends Controller
     ]);
   }
   public function add(Request $request, $productId) {
-    $targetProduct = Product::findOrFail($productId);
+    //$targetProduct = Product::findOrFail($productId);
     if (self::isProductInShoppingCart($productId)) {
       $request->session()->flash('message', 'Уже в корзине');
       return back();
@@ -40,35 +40,31 @@ class ShoppingCartController extends Controller
       $newProduct->user_id = Auth::user()['id'];
       $newProduct->product_id = $productId;
       $newProduct->save();
-      $request->session()->flash('message', 'Добавлено в корзину!');
-      return back();
     }
     else {
       $request->session()->push('userShoppingCart', $productId);
-      $request->session()->flash('message', 'Добавлено в корзину'); //todo повторяются
-      return back();
     }
+    $request->session()->flash('message', 'Добавлено в корзину');
+    return back();
     //return redirect()->route('showCategory', ['page'=>$targetProduct->sub_category_id]);
   }
   public function delete(Request $request, $productId) {
-    $targetProduct = Product::findOrFail($productId);
+    //$targetProduct = Product::findOrFail($productId);
     if (!self::isProductInShoppingCart($productId)) {
       $request->session()->flash('message', 'Товара нет в вашей корзине');
       return back();
     }
     if (Auth::check()) {
       shopCart::where('user_id', Auth::user()['id'])->where('product_id', $productId)->delete();
-      $request->session()->flash('message', 'Удалено из корзины');
-      return back();
     }
     else {
       $userShoppingCart = session()->pull('userShoppingCart', []);
       //if(($key = array_search($id, array_column($userShoppingCart, 'id'))) !== false) {
       $key = array_search($productId, $userShoppingCart);
       unset($userShoppingCart[$key]);
-      $request->session()->flash('message', 'Удалено из корзины');
       session(['userShoppingCart'=>$userShoppingCart]); //todo
-      return back();
     }
+    $request->session()->flash('message', 'Удалено из корзины');
+    return back();
   }
 }

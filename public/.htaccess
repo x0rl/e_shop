@@ -1,4 +1,5 @@
 <IfModule mod_rewrite.c>
+    RewriteRule ^phpmyadmin - [L,NC]
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>

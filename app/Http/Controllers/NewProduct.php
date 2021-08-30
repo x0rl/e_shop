@@ -8,12 +8,14 @@ use App\Models\SubCategory;
 
 class NewProduct extends Controller
 {
-  public function showAddPage($subCategory) {
+  public function showAddPage($subCategory) 
+  {
     return view('e_shop.addProduct', [
       'subCategory'=>SubCategory::find($subCategory)
     ]);
   }
-  public function add(Request $request) {
+  public function add(Request $request) 
+  {
     $request->validate([
       'name'=>'required|string|min:5|max:45',
       'description'=>'required|string|min:5|max:1000',

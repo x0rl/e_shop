@@ -3,14 +3,8 @@
   use App\Http\Controllers\Controller;
   use Illuminate\Support\Facades\Auth;
   use Illuminate\Http\Request;
-  use App\Models\Product;
   use App\Models\shopCart;
   use App\Models\SubCategory;
-  use App\Models\Comment;
-  use App\Models\Review;
-  use App\Models\ShoppingList;
-  use App\Models\Category;
-  use App\Models\User;
   //use Illuminate\Routing\Controller as BaseController;
 
   class PageController extends Controller {
@@ -18,10 +12,12 @@
      * todo переделать сообщения через request session()->flash
      */
     private $message = null;
-    public function showMainPage(Request $request) {
+    public function showMainPage() 
+    {
       return view('e_shop.mainPage');
     }
-    public function showCategory(Request $request, $id) {
+    public function showCategory(Request $request, $id) 
+    {
       if (!SubCategory::find($id))
         abort(404);
       elseif ($request->filled(['orderBy', 'sort'])) {

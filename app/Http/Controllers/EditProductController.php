@@ -15,7 +15,7 @@ class EditProductController extends Controller
       $targetProduct->delete();
       $request->session()->flash('message', 'Успешно удалено');
       return redirect()->route('showCategory', ['page'=>$subCategory]);
-    }
+    } 
     elseif ($request->input('name')) {
       $request->validate([
         'name' => 'required|string|max:45',

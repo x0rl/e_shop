@@ -34,9 +34,7 @@ class BuyProductController extends Controller
         $newRowInShoppingList->save();
         
         BuyProduct::dispatch($targetProduct);
-        //ProcessAmoCRM::dispatch($targetProduct);
-        //dispatch(new BuyProduct($targetProduct));
-        //return redirect('/personal_area/shoppingList');
+        return redirect('/personal_area/shoppingList');
       }
       else
         $message = ['type'=>'secondary', 'text'=>'У вас недостаточно денег'];

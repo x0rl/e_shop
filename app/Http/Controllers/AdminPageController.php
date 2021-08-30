@@ -6,19 +6,18 @@ use App\Models\ShoppingList;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AdminPageController extends Controller
 {
-  public function sales(Request $request) {
+  public function sales(Request $request) 
+  {
     if ($year = $request->query('year')) {
       $request->validate([
         'year'=>'integer|min:2020|max:'.date('Y')
       ]);
-
-    }
-    else {
+    } else {
       $year = date('Y');
-
     }
     //$sales = ShoppingList::where('YEAR(created_at)', $year)->get();
     $sales = ShoppingList::whereRaw('YEAR(created_at) = '.$year)
@@ -30,7 +29,8 @@ class AdminPageController extends Controller
       'sales'=>$sales ?? null
     ]);
   }
-  public function users(Request $request) {
+  public function users(Request $request) 
+  {
     //if ($targetUser = $_GET['banUser']) {}
     if ($targetId = $request->query('id')) {
       $request->validate([
@@ -61,11 +61,13 @@ class AdminPageController extends Controller
         $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' повышен до админа'];
       }
       elseif ($action === 'downToUser' and $targetUser->status != 'user' and $targetUser->id !== Auth::user()['id']) {
+        Log::critical("Администратор $targetUser->name был снят с должности ".Auth::user()['name'].'['.Auth::user()['id'].']');
         $targetUser->status = 'user';
         $targetUser->save();
         $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' понижен до пользователя'];
       }
     }
+    //Log::critical('from AdminPageController', ['id'=>Auth::user()['id']]);
     return view('e_shop.adminPanel', [
       'users'=>User::paginate(5),
       'message'=>$message ?? null

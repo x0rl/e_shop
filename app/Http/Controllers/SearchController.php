@@ -7,7 +7,8 @@ use App\Models\Product;
 
 class SearchController extends Controller
 {
-  public function index(Request $request) {
+  public function index(Request $request) 
+  {
     if (! $query=$request->query('name'))
       //return redirect('/');
       return back();
