@@ -47,7 +47,7 @@ class ApiClient
   {
     $this->baseDomain = $name;
   }
-  public function getAccessTokenByCode($code)
+  public function setAccessTokenByCode($code)
   {
     $data = [
       'client_id' => $this->clientId,
@@ -66,7 +66,8 @@ class ApiClient
     $method = 'oauth2/access_token';
     $newAccessToken = json_decode($this->apiRequest->sendRequest($method, $params, $this->baseDomain), true);
     $newAccessToken['base_domain'] = $this->baseDomain;
-    return $newAccessToken;
+    $this->accessToken = $newAccessToken;
+    $this->saveToken();
   }
   public function getAccessToken() 
   {
@@ -101,8 +102,7 @@ class ApiClient
       'refresh_token' => $this->accessToken['refresh_token'],
       'base_domain' => $this->accessToken['base_domain'],
     ];
-    file_put_contents($this->token_file, json_encode($data));
-    $tokenFromBD = Token::findOrFail(1);
+    $tokenFromBD = Token::find(1);
     $tokenFromBD->token = $data;
     $tokenFromBD->save();
   }

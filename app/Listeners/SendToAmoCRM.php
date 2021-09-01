@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\Buyproduct;
+use App\Events\SendedToAmoCRM;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Auth;
@@ -45,7 +46,7 @@ class SendToAmoCRM implements ShouldQueue
         $lead = new Lead();
         $lead->name = $event->product->getName();
         $lead->price = $event->product->getPrice();
-        if($contact = $contactsService->isContactExists('766597', 1)) {
+        if($contact = $contactsService->isContactExists('766597', 1)) {//Auth::user()['id'])) {
             $lead->attachContact($contact['_embedded']['contacts'][0]['id'], true);
         } else {
             $contact = new Contact();

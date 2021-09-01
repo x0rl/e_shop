@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\BuyProduct;
-use App\Listeners\sendToAmoCRM;
+use App\Events\SendedToAmoCRM;
+use App\Listeners\SendNotification;
+use App\Listeners\SendToAmoCRM;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -21,7 +23,7 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         BuyProduct::class => [
-            sendToAmoCRM::class,
+            SendToAmoCRM::class,
         ],
     ];
 

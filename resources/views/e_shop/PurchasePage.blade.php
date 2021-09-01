@@ -50,4 +50,16 @@
       </tr>
     </table>
   </div>
+  <!-- receive notifications -->
+  <script src="{{ asset('js/app.js') }}"></script>
+ 
+  <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+  <script>
+    let userId = 1;
+    Echo.private(`users.${userId}`)
+    .listen('SendedToAmoCRM', (e) => {
+        alert('wordakkdsjk');
+    });
+  </script>
+  <!-- receive notifications -->
 @endsection
