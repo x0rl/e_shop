@@ -13,3 +13,17 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+.env.example
+.gitignore
+.styleci.yml
+robots.txt
+phpunit.xml
+tailwind.config.js
+package-lock.json
+package.json
+worker.log
+b.php
+.Xgitignore
+public/token_info_new.json
+app/AmoCRM/index.php
+config/mail.php

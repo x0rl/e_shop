@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Models\AdminPanel;
 
 class AdminPageController extends Controller
 {
@@ -58,12 +59,18 @@ class AdminPageController extends Controller
       elseif ($action === 'upToAdmin' and $targetUser->status != 'admin') {
         $targetUser->status = 'admin';
         $targetUser->save();
+        $adminPanel = new AdminPanel();
+        $adminPanel->admin_id = $targetUser->id;
+        $adminPanel->admin_login = $targetUser->name;
+        $adminPanel->save();
         $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' повышен до админа'];
       }
       elseif ($action === 'downToUser' and $targetUser->status != 'user' and $targetUser->id !== Auth::user()['id']) {
         Log::critical("Администратор $targetUser->name был снят с должности ".Auth::user()['name'].'['.Auth::user()['id'].']');
         $targetUser->status = 'user';
         $targetUser->save();
+        if ($user = AdminPanel::where('admin_id', $targetUser->id))
+          $user->delete();
         $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' понижен до пользователя'];
       }
     }

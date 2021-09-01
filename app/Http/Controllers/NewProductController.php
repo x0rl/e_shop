@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\SubCategory;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AbsentResponsibleAdmin;
+use App\Models\AdminPanel;
+use Illuminate\Support\Facades\Auth;
 
-class NewProduct extends Controller
+class NewProductController extends Controller
 {
   public function showAddPage($subCategory) 
   {
@@ -22,6 +27,10 @@ class NewProduct extends Controller
       'price'=>'required|integer',
       'quantity'=>'required|integer'
     ]);
+    if (!SubCategory::find($request->input('subCategory'))) {
+      $request->session()->flash('message', 'Вы пытаетесь добавить товар в несуществующую категорию!!!');
+      return back();
+    }
     $newProduct = new Product();
     $newProduct->name = $request->input('name');
     $newProduct->description = $request->input('description');
@@ -30,6 +39,7 @@ class NewProduct extends Controller
     $newProduct->sub_category_id = $request->input('subCategory');
     $newProduct->save();
     $request->session()->flash('message', 'Успешно добавлено!'); //todo
-    return redirect()->route('showCategory', ['page'=>$request->input('subCategory')]);
+    if (!AdminPanel::where('responsible_category', $newProduct->sub_category_id)->first())
+      Mail::to(env('ADMIN_EMAIL'))->queue(new AbsentResponsibleAdmin(Auth::user(), $newProduct, $_SERVER['SERVER_NAME'].'/product/'.$newProduct->id));
   }
 }

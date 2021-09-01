@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\ShoppingList;
+use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -13,6 +15,10 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+Broadcast::channel('users.{userId}', function ($user, $userId) {
+    //return (int) $user->id == (int) $userId;
+    return true; //todo
 });
+// Broadcast::channel('users.{id}', function ($user, $userId) {
+//     return $userId === ShoppingList::where('product_id', $product->id)->where('user_id', $userId)->user_id;
+// });

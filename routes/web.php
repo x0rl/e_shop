@@ -32,8 +32,8 @@ Route::middleware('IsUserAdmin')->group(function() {
   Route::get('/editProduct/{productId}', 'EditProductController@editPage');
 
   Route::get('/admin_panel/users', 'AdminPageController@users');
-  Route::get('/newProduct/{subCategory}', 'NewProduct@showAddPage');
-  Route::post('/newProduct/add', 'NewProduct@add');
+  Route::get('/newProduct/{subCategory}', 'NewProductController@showAddPage');
+  Route::post('/newProduct/add', 'NewProductController@add');
   Route::get('/admin_panel/sales', 'AdminPageController@sales');
 });
 
