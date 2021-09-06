@@ -12,6 +12,12 @@
   class PersonalAreaController extends Controller 
   {
     private $message = null;
+    public function profile()
+    {
+      return view('e_shop.profile', [
+        'emailVerified' => Auth::user()['email_verified_at'] ?? false
+      ]);
+    }
     public function reviews() 
     {
       return view('e_shop.PersonalAreaReviews', [

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\SubCategory;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,12 +48,13 @@ Route::middleware('auth')->group(function() {
   Route::post('/buyProduct', 'BuyProductController@showPurchasePage');
   Route::get('/personal_area/reviews', 'PersonalAreaController@reviews');
   Route::get('/personal_area/shoppingList', 'PersonalAreaController@shoppingList');
-
   Route::get('/personal_area', 'PersonalAreaController@mainPage');
+  Route::get('/personal_area/profile', 'PersonalAreaController@profile');
 });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
+
 
 require __DIR__.'/auth.php';
