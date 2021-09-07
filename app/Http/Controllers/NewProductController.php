@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddProductRequest;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\SubCategory;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\AbsentResponsibleAdmin;
 use App\Models\AdminPanel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class NewProductController extends Controller
 {
@@ -19,18 +21,10 @@ class NewProductController extends Controller
       'subCategory'=>SubCategory::find($subCategory)
     ]);
   }
-  public function add(Request $request) 
+  public function add(AddProductRequest $request) 
   {
-    $request->validate([
-      'name'=>'required|string|min:5|max:45',
-      'description'=>'required|string|min:5|max:1000',
-      'price'=>'required|integer',
-      'quantity'=>'required|integer'
-    ]);
-    if (!SubCategory::find($request->input('subCategory'))) {
-      $request->session()->flash('message', 'Вы пытаетесь добавить товар в несуществующую категорию!!!');
-      return back();
-    }
+    $targetSubCategory = (int) $request->input('subCategory');
+    Gate::authorize('addProduct', $targetSubCategory);
     $newProduct = new Product();
     $newProduct->name = $request->input('name');
     $newProduct->description = $request->input('description');
@@ -38,8 +32,9 @@ class NewProductController extends Controller
     $newProduct->quantity = $request->input('quantity');
     $newProduct->sub_category_id = $request->input('subCategory');
     $newProduct->save();
-    $request->session()->flash('message', 'Успешно добавлено!'); //todo
-    if (!AdminPanel::where('responsible_category', $newProduct->sub_category_id)->first())
-      Mail::to(env('ADMIN_EMAIL'))->queue(new AbsentResponsibleAdmin(Auth::user(), $newProduct, $_SERVER['SERVER_NAME'].'/product/'.$newProduct->id));
+    $request->session()->flash('message', ['type' => 'success', 'text' => 'Успешно добавлено!']);
+    // if (!AdminPanel::where('responsible_category', $newProduct->sub_category_id)->first()) //todo выключить двухфакторку (либо фикс метода) и расскомментировать
+    //   Mail::to(env('ADMIN_EMAIL'))->queue(new AbsentResponsibleAdmin(Auth::user(), $newProduct, $_SERVER['SERVER_NAME'].'/product/'.$newProduct->id));
+    return redirect()->route('showCategory', ['page' => $targetSubCategory]);
   }
 }

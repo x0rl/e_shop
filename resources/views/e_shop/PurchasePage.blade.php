@@ -40,7 +40,7 @@
       </tr>
       <tr>
         <td colspan="2">
-          <form method="POST">
+          <form method="POST" action='{{ route('SubmitPurchase') }}'>
             @csrf
             <input hidden name="quantity" value="{{$quantity}}">
             <input hidden name="id" value="{{$product['id']}}">

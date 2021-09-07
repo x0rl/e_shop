@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminActionRequest;
 use App\Models\ShoppingList;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,54 +31,50 @@ class AdminPageController extends Controller
       'sales'=>$sales ?? null
     ]);
   }
-  public function users(Request $request) 
-  {
-    //if ($targetUser = $_GET['banUser']) {}
-    if ($targetId = $request->query('id')) {
-      $request->validate([
-        'id'=>'required|integer',
-        'action'=>['required', 'string', 'regex:#ban|unban|upToAdmin|downToUser#']
-      ]);
-      $targetUser = User::findOrFail($targetId);
-      $action = $request->query('action', null);
-      if ($action === 'unban') {
-        if ($targetUser['ban_status']) {
-          $targetUser->ban_status = null;
-          $targetUser->save();
-          $message =  ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' успешно разблокирован'];
-        }
-      }
-      elseif ($action === 'ban') {
-        if ($targetUser['id'] == Auth::user()['id'] or $targetUser['status'] == 'admin')
-          $message = ['type'=>'secondary', 'text'=>'Так нельзя'];
-        else {
-          $targetUser->ban_status = date('d:m:y', time());
-          $targetUser->save();
-          $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' успешно заблокирован'];
-        }
-      }
-      elseif ($action === 'upToAdmin' and $targetUser->status != 'admin') {
-        $targetUser->status = 'admin';
-        $targetUser->save();
-        $adminPanel = new AdminPanel();
-        $adminPanel->admin_id = $targetUser->id;
-        $adminPanel->admin_login = $targetUser->name;
-        $adminPanel->save();
-        $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' повышен до админа'];
-      }
-      elseif ($action === 'downToUser' and $targetUser->status != 'user' and $targetUser->id !== Auth::user()['id']) {
-        Log::critical("Администратор $targetUser->name был снят с должности ".Auth::user()['name'].'['.Auth::user()['id'].']');
-        $targetUser->status = 'user';
-        $targetUser->save();
-        if ($user = AdminPanel::where('admin_id', $targetUser->id))
-          $user->delete();
-        $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' понижен до пользователя'];
-      }
-    }
-    //Log::critical('from AdminPageController', ['id'=>Auth::user()['id']]);
+  public function users() {
     return view('e_shop.adminPanel', [
       'users'=>User::paginate(5),
       'message'=>$message ?? null
     ]);
+  }
+  public function updateUsers(AdminActionRequest $request) 
+  {
+    $targetUser = User::findOrFail($request->get('id'));
+    $action = $request->get('action', null);
+    switch ($action) {
+      case 'ban':
+        $this->authorize('ban', $targetUser);
+        $targetUser->ban_status = date('d:m:y', time());
+        $targetUser->save();
+        $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' успешно заблокирован'];
+        break;
+      case 'unban':
+        $targetUser->ban_status = null;
+        $targetUser->save();
+        $message =  ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' успешно разблокирован'];
+        break;
+      case 'upToAdmin':
+        $this->authorize('changeAdminStatus', User::class);
+        $targetUser->status = 'admin';
+        $targetUser->save();
+        // $adminPanel = new AdminPanel();
+        // $adminPanel->admin_id = $targetUser->id;
+        // $adminPanel->admin_login = $targetUser->name;
+        // $adminPanel->save(); todo!
+        $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' повышен до админа'];
+        break;
+      case 'downToUser':
+        $this->authorize('changeAdminStatus', User::class);
+        Log::critical("Администратор $targetUser->name был снят с должности ".Auth::user()['name'].'['.Auth::user()['id'].']');
+        $targetUser->status = 'user';
+        $targetUser->save();
+        // if ($user = AdminPanel::where('admin_id', $targetUser->id))
+        //   $user->delete(); todo!
+        $message = ['type'=>'success', 'text'=>'Пользователь с ником '.$targetUser['name'].' понижен до пользователя'];
+        break;
+      default:
+        abort(404, 'huh');
+    }
+    return redirect()->back()->with(['message' => $message]);
   }
 }

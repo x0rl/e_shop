@@ -14,19 +14,26 @@
     </thead>
     <tbody>
         @foreach($users as $user)
+          @if ($user['ban_status'])
+          <tr class='table-secondary'>
+          @else
           <tr>
+          @endif
             <td>{{$user['id']}}</td>
             <td>{{$user['name']}}</td>
             <td>{{$user['status']}}</td>
             <td>{{$user['email']}}</td>
             <td>
               {!! $user['ban_status'] //todo
-                ? "<a href='?page=".$users->currentPage()."&id=".$user['id']."&action=unban'>Разблокировать</a>"
-                : "<a href=\"?page=".$users->currentPage()."&id=".$user['id']."&action=ban\">Заблокировать</a>"!!}
+                ? "<a href='".route('usersAction')."?id=".$user['id']."&action=unban'>Разблокировать</a>"
+                : "<a href='".route('usersAction')."?id=".$user['id']."&action=ban'>Заблокировать</a>"
+                //: "<a href='/admin_panel/users/update/"
+              !!}
               <br>
               {!! $user['status'] == 'admin' //todo
-                ? "<a href=\"?page=".$users->currentPage()."&id=".$user['id']."&action=downToUser\">Понизить до пользователя</a>"
-                : "<a href=\"?page=".$users->currentPage()."&id=".$user['id']."&action=upToAdmin\">Повысить до админа</a>"!!}
+                ? "<a href='".route('usersAction')."?id=".$user['id']."&action=downToUser'>Понизить до пользователя</a>"
+                : "<a href='".route('usersAction')."?id=".$user['id']."&action=upToAdmin'>Повысить до админа</a>"
+              !!}
             </td>
           </tr>
           @endforeach

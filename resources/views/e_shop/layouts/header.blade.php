@@ -28,7 +28,7 @@
           <a class="dropdown-item" href="/logout">Выйти</a>
         </div>
       </li>
-      @if (Auth::user()['status'] === 'admin')
+      @if (Auth::user()->isAdmin())
         <li class="nav-item dropdown active">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Админ панель

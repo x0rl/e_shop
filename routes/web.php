@@ -30,9 +30,9 @@ Route::get('/ShoppingCart/delete/{productId}', 'ShoppingCartController@delete');
 Route::get('/ShoppingCart/add/{productId}', 'ShoppingCartController@add');
 
 Route::middleware('IsUserAdmin')->group(function() {
-  Route::get('/editProduct/{productId}', 'EditProductController@editPage');
-
+  Route::get('/editProduct/{productId}', 'ProductController@edit');
   Route::get('/admin_panel/users', 'AdminPageController@users');
+  Route::get('/admin_panel/users/update', 'AdminPageController@updateUsers')->name('usersAction');
   Route::get('/newProduct/{subCategory}', 'NewProductController@showAddPage');
   Route::post('/newProduct/add', 'NewProductController@add');
   Route::get('/admin_panel/sales', 'AdminPageController@sales');
@@ -45,7 +45,8 @@ Route::get('/subCategory/{page}', 'PageController@showCategory')->name('showCate
 Route::middleware('auth')->group(function() {
   Route::post('/product/{productId}/addReview', 'ProductController@addReview');
   Route::post('/product/{productId}/addComment', 'ProductController@addComment');
-  Route::post('/buyProduct', 'BuyProductController@showPurchasePage');
+  Route::post('/buyProduct', 'BuyProductController@index');
+  Route::post('/buyProduct/submit', 'BuyProductController@store')->name('SubmitPurchase');
   Route::get('/personal_area/reviews', 'PersonalAreaController@reviews');
   Route::get('/personal_area/shoppingList', 'PersonalAreaController@shoppingList');
   Route::get('/personal_area', 'PersonalAreaController@mainPage');

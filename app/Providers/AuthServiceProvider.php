@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\SubCategory;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -13,7 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\User' => 'App\Policies\UserPolicy',
     ];
 
     /**
@@ -25,6 +27,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('addProduct', function($subCategory) {
+            return SubCategory::find($subCategory) 
+                ? Response::allow()
+                : Response::deny('Вы пытаетесь добавить товар в несуществующую категорию');
+        });
     }
 }

@@ -36,7 +36,7 @@
       @if (Auth::check())
         <tr>
           <td colspan="2">
-            <form method="POST" class="form-inline justify-content-center" target="_blank" action="/buyProduct">
+            <form method="POST" class="form-inline justify-content-center" action="/buyProduct">
               @csrf
               <input hidden name="id" value="{{$product['id']}}">
               <div class="form-group mx-sm-2 mb-2">

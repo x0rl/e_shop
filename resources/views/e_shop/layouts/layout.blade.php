@@ -28,7 +28,14 @@
           @include('e_shop.layouts.sidebar')
         </td>
         <td class="content">
-          {{session('message')}}
+          @if (session('message'))
+            <div style="width: 100%; margin: auto" class="alert fade show alert-dismissible alert-{{session('message')['type']}}" role="alert">
+              {{session('message')['text']}}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          @endif
           @if (isset($message))
             <div style="width: 100%; margin: auto" class="alert fade show alert-dismissible alert-{{$message['type']}}" role="alert">
               {{$message['text']}}

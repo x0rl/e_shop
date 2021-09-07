@@ -10,7 +10,6 @@
   </nav>
   <br><br><h2>{{$product['name']}}</h2><br>
 
-  {!!$message!!}
   <form>
   <div class="center-block" style="width: 700px; margin:auto;">
     <table class="table table-bordered">

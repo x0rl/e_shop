@@ -3,7 +3,7 @@
 @section('content')
 <h2>Список товаров категории {{$subCategory['name']}}</h2>
 @if (Auth::check())
-  @if(Auth::user()['status'] == 'admin')
+  @if(Auth::user()->isAdmin())
     <a href="/newProduct/{{$subCategory['id']}}">Добавить продукт</a><br><br>
   @endif
 @endif
