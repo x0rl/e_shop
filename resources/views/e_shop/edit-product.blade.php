@@ -10,7 +10,7 @@
   </nav>
   <br><br><h2>{{$product['name']}}</h2><br>
 
-  <form>
+  <form action='{{ route('editProduct', $product->id) }}'>
   <div class="center-block" style="width: 700px; margin:auto;">
     <table class="table table-bordered">
       <tbody>

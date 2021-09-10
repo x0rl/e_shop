@@ -17,9 +17,9 @@ class IsUserAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-      if (Auth::check()) {
-        return Auth::user()['status'] !== 'root' && Auth::user()['status'] !== 'admin' ? abort(404) : $next($request);
-      }
-      return abort(404);
+        if (Auth::check()) {
+            return Auth::user()['status'] !== 'root' && Auth::user()['status'] !== 'admin' ? abort(404) : $next($request);
+        }
+        return abort(404);
     }
 }

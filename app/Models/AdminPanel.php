@@ -8,5 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class AdminPanel extends Model
 {
     use HasFactory;
+    
     protected $table = 'admin_panel';
 }

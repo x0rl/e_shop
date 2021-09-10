@@ -36,14 +36,6 @@
               </button>
             </div>
           @endif
-          @if (isset($message))
-            <div style="width: 100%; margin: auto" class="alert fade show alert-dismissible alert-{{$message['type']}}" role="alert">
-              {{$message['text']}}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-          @endif
           @yield('content')
         </td>
       </tr>

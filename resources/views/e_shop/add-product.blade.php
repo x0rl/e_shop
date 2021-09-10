@@ -9,7 +9,7 @@
   <div class="center-block" style="width: 60%; margin:auto;">
   <form method="POST" action="/newProduct/add">
     @csrf
-    <input hidden name="subCategory" value="{{$subCategory->id}}">
+    <input class='form-control' hidden name="sub_category_id" value="{{$subCategory->id}}">
     <table class="table table-bordered">
       <tbody>
       <tr>

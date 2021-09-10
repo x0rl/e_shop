@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubCategory extends Model
 {
-  public $timestamps = false;
-  protected $table = 'sub_categories';
-  public function products() {
-    return $this->hasMany(Product::class);
-  }
+    public $timestamps = false;
+
+    protected $table = 'sub_categories';
+    
+    public function products() 
+    {
+        return $this->hasMany(Product::class);
+    }
 }

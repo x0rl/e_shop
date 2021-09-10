@@ -17,6 +17,7 @@ use App\Models\Token;
 class SendToAmoCRM implements ShouldQueue
 {
     use InteractsWithQueue;
+    
     public $connection = 'database';
     public $queue = 'default';
     public $delay = 0;

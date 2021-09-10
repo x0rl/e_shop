@@ -18,6 +18,7 @@ class CreateShoppingListTable extends Migration
             $table->integer('product_id');
             $table->integer('user_id');
             $table->integer('quantity');
+            $table->integer('price');
             $table->timestamps();
         });
     }

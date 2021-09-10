@@ -4,9 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PurchaseRequest extends FormRequest
+class EditProductRequest extends FormRequest
 {
-    protected $stopOnFirstFailure = true;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -25,9 +24,10 @@ class PurchaseRequest extends FormRequest
     public function rules()
     {
         return [
-            'quantity' => 'required|integer',
-            'product_id' => 'required|integer',
-            'submit' => 'required'
+            'name' => 'required|string|max:45',
+            'description' => 'required|string|max:1000',
+            'price'=>'required|integer|max:999999',
+            'quantity' => 'required|integer|max:9999'
         ];
     }
 }

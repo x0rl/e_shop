@@ -9,12 +9,12 @@ class SearchController extends Controller
 {
   public function index(Request $request) 
   {
-    if (! $query=$request->query('name'))
-      //return redirect('/');
+    if (! $query = $request->name) {
       return back();
+    }
     $result = Product::where('name', 'like', "%$query%")->paginate(10)->withQueryString();
     return view('e_shop.search', [
-      'result'=>$result
+      'result' => $result
     ]);
   }
 }

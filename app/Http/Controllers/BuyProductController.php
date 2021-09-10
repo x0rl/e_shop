@@ -12,32 +12,32 @@ use App\Models\ShoppingList;
 
 class BuyProductController extends Controller
 {
-  public function store(PurchaseRequest $request) 
-  {
-    $productId = $request->get('id');
-    $quantity = $request->get('quantity');
-    $targetProduct = Product::findOrFail($productId);
-    if ($request->user()->cannot('buyProduct', [$targetProduct, $quantity])) {
-      abort(403, 'wat r u doing');
+    public function store(PurchaseRequest $request) 
+    {
+        $quantity = $request->quantity;
+        $targetProduct = Product::findOrFail($request->product_id);
+        if ($request->user()->cannot('buyProduct', [$targetProduct, $quantity])) {
+            abort(403, 'wat r u doing');
+        }
+        $request->user()->money -= $targetProduct->price * $request->get('quantity');
+        $request->user()->save();
+        $targetProduct->quantity -= $request->get('quantity');
+        $targetProduct->save();
+        $newRow = ShoppingList::create($request->validated());
+        $newRow->user_id = Auth::user()['id'];
+        $newRow->save();
+        BuyProduct::dispatch($targetProduct);
+        $request->session()->flash('message', [
+            'type' => 'success',
+            'text' => 'Успешно приобретено!'
+        ]);
+        return redirect('/personal_area/shoppingList');
     }
-    $request->user()->money -= $targetProduct->price * $request->get('quantity');
-    $request->user()->save();
-    $targetProduct->quantity -= $request->get('quantity');
-    $targetProduct->save();
-    $newRowInShoppingList = new ShoppingList();
-    $newRowInShoppingList->user_id = Auth::user()['id'];
-    $newRowInShoppingList->product_id = $productId;
-    $newRowInShoppingList->quantity = $request->get('quantity');
-    $newRowInShoppingList->save();
-    BuyProduct::dispatch($targetProduct);
-    $request->session()->flash('message', ['type' => 'success', 'text' => 'Успешно приобретено!']);
-    return redirect('/personal_area/shoppingList');
-  }
-  public function index(Request $request)
-  {
-    return view('e_shop.PurchasePage', [
-      'product'=>Product::findOrFail($request->get('id')),
-      'quantity'=>$request->get('quantity')
-    ]);
-  }
+    public function index(Request $request)
+    {
+        return view('e_shop.purchase-page', [
+            'product' => Product::findOrFail($request->id),
+            'quantity' => $request->quantity
+        ]);
+    }
 }

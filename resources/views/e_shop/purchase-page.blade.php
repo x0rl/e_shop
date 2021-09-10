@@ -43,7 +43,7 @@
           <form method="POST" action='{{ route('SubmitPurchase') }}'>
             @csrf
             <input hidden name="quantity" value="{{$quantity}}">
-            <input hidden name="id" value="{{$product['id']}}">
+            <input hidden name="product_id" value="{{$product['id']}}">
             <input type="submit" class="btn" name="submit" value="Оплатить">
           </form>
         </td>

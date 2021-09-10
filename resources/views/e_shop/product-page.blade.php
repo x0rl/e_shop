@@ -49,10 +49,10 @@
         </tr>
         @if (Auth::user()['status'] == 'admin')
           <tr>
-            <td colspan="2"><a href="/editProduct/{{$product['id']}}">Редактировать</a></td>
+            <td colspan="2"><a href="{{ route('productEditPage', $product->id) }}">Редактировать</a></td>
           </tr>
           <tr>
-            <td colspan="2"><a href="/editProduct/{{$product['id']}}?delete">Удалить</a></td>
+            <td colspan="2"><a href="{{ route('deleteProduct', $product->id) }}">Удалить</a></td>
           </tr>
         @endif
       @endif
@@ -124,7 +124,7 @@
                 @elseif ($product->reviews()->where('user_id', Auth::user()['id'])->where('product_id', $product['id'])->first())
                   Для управления оставленными отзывами, перейдите в личный кабинет<br>todo<br><br>
                 @else
-                  <form class="form-inline" action="/product/{{$product['id']}}/addReview" method="POST">
+                  <form class="form-inline" action="{{ route('addReview', $product->id) }}" method="POST">
                     @csrf
                     <div class="form-group mx-sm-3 mb-2">
                       <textarea class="form-control" placeholder="Отзыв" style="width: 300px" name="text"></textarea>
