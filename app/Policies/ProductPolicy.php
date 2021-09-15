@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Favorites;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\ShoppingList;

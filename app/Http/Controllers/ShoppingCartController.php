@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ShoppingCartRequest;
+use App\Models\ShoppingList;
 use Illuminate\Http\Request;
 use App\Models\shopCart;
 use App\Models\Product;
@@ -10,15 +11,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ShoppingCartController extends Controller
 {
-    public static function isProductInShoppingCart($productId) 
+    public function show() 
     {
-        if (Auth::check()) {
-            return shopCart::where('user_id', Auth::user()['id'])->where('product_id', $productId)->first() ? true : false;
-        } else {
-            return in_array($productId, session('userShoppingCart', [])) ? true : false;
-        }
-    }
-    public function show() {
         if (Auth::check()) {
             $shoppingCart = shopCart::where('user_id', Auth::user()['id'])->paginate(5);
         } elseif ($shoppingCart = session('userShoppingCart')) {
@@ -33,7 +27,8 @@ class ShoppingCartController extends Controller
             'shoppingCart' => $shoppingCart ?? []
         ]);
     }
-    public function add(ShoppingCartRequest $request, $productId) {
+    public function add(ShoppingCartRequest $request, $productId) 
+    {
         if (self::isProductInShoppingCart($productId)) {
             $request->session()->flash('message', [
                 'type' => 'warning',
@@ -55,7 +50,8 @@ class ShoppingCartController extends Controller
         ]);
         return back();
     }
-    public function delete(ShoppingCartRequest $request, $productId) {
+    public function delete(ShoppingCartRequest $request, $productId) 
+    {
         if (!self::isProductInShoppingCart($productId)) {
             $request->session()->flash('message', ['type' => 'warning', 'text' => 'Товара нет в вашей корзине']);
             return back();
@@ -74,5 +70,22 @@ class ShoppingCartController extends Controller
             'text' => 'Удалено из корзины'
         ]);
         return back();
+    }
+    public static function isProductInShoppingCart($productId) 
+    {
+        if (Auth::check()) {
+            return shopCart::where('user_id', Auth::user()['id'])->where('product_id', $productId)->first() ? true : false;
+        } else {
+            return in_array($productId, session('userShoppingCart', [])) ? true : false;
+        }
+    }
+    public static function isProductInShoppingList($productId)
+    {
+        if (Auth::check()) {
+            return ShoppingList::where('product_id', $productId)->where('user_id', Auth::user()['id'])->first()
+                ? true : false;
+        } else {
+            return false;
+        }
     }
 }

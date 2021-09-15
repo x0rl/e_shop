@@ -1,5 +1,6 @@
 @section ('title', 'Мои отзывы')
 @section ('content')
+  @include('e_shop.layouts.breadcrumbs-personal-area')
   <div style="width: 700px; margin: auto;">
   <table class="table">
     @if ($userReviews)

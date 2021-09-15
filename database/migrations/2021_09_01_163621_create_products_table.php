@@ -20,6 +20,7 @@ class CreateProductsTable extends Migration
             $table->text('description');
             $table->integer('price');
             $table->integer('quantity');
+            $table->integer('discount');
             $table->integer('reviews_count');
             $table->float('rating');
             $table->timestamps();

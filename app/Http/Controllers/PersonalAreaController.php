@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Faker\Provider\Person;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EditAddressRequest;
+use App\Models\Addresses;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\shopCart;
@@ -16,7 +18,8 @@ class PersonalAreaController extends Controller
     public function profile()
     {
         return view('e_shop.profile', [
-            'emailVerified' => Auth::user()['email_verified_at'] ?? false
+            'emailVerified' => Auth::user()['email_verified_at'] ?? false,
+            'address' => Auth::user()->getAddress()
         ]);
     }
     public function reviews() 
@@ -35,6 +38,18 @@ class PersonalAreaController extends Controller
     public function mainPage()
     {
         return view('e_shop.personal-area');
+    }
+    public function editAddress(EditAddressRequest $request)
+    {
+        Addresses::updateOrCreate(
+            ['user_id' => Auth::user()['id']],
+            $request->validated()
+        );
+        if ($request->expectsJson()) {
+            return 'Адрес доставки успешно изменен';
+        } else {
+            return redirect()->route('profile');
+        }
     }
 }
 ?>

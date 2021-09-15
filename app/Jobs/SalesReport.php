@@ -18,19 +18,15 @@ class SalesReport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $fast;
+    private $frequency;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($fast)
+    public function __construct($frequency)
     {
-        if ($fast == 'weekly') {
-            $this->fast = 'weekly';
-        } else {
-            $this->fast = 'monthly';
-        }
+        $this->frequency = $frequency;
     }
 
     /**
@@ -41,20 +37,22 @@ class SalesReport implements ShouldQueue
     public function handle()
     {
         // TODO
-        if ($this->fast == 'weekly') {
+        if ($this->frequency == 'weekly') {
             $sales = ShoppingList::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->get();
-            $total = 0;
-            foreach ($sales as $item) { //todo
-                $total += $item->product['price'];
-            }
-            Mail::to(env('ADMIN_EMAIL'))->send(new MailSalesReportWeekly($sales, $total));
+            $totalSum = $this->getSumOfProductsPrice($sales);
+            Mail::to(config('mail.from.address'))->send(new MailSalesReportWeekly($sales, $totalSum));
         } else {
             $sales = ShoppingList::whereMonth('created_at', '=', date('m'))->get();
-            $total = 0;
-            foreach ($sales as $item) { //todo
-                $total += $item->product['price'];
-            }
-            Mail::to(env('ADMIN_EMAIL'))->send(new SalesReportMonthly($sales, $total));
+            $totalSum = $this->getSumOfProductsPrice($sales);
+            Mail::to(config('mail.from.address'))->send(new SalesReportMonthly($sales, $totalSum));
         }
+    }
+    private function getSumOfProductsPrice($sales) 
+    {
+        $total = 0;
+        foreach ($sales as $item) { //todo
+            $total += $item->product['price'];
+        }
+        return $total;
     }
 }

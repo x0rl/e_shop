@@ -1,5 +1,8 @@
 @section('title', 'Корзина')
 @section('content')
+@if (Auth::check())
+  @include('e_shop.layouts.breadcrumbs-personal-area')
+@endif
 <h2>Корзина</h2>
 @if (!count($shoppingCart))
   <br>Ваша корзина пуста :С

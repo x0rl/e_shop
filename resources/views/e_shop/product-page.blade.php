@@ -8,6 +8,7 @@
       <li class="breadcrumb-item active" aria-current="page">{{$product['name']}}</li>
     </ol>
   </nav>
+  <input type='hidden' id='productId' value = '{{ $product['id'] }}'>
   <h2>{{$product['name']}}</h2>
   <div class="center-block" style="width: 700px; margin:auto;">
     <table class="table table-bordered">
@@ -28,12 +29,28 @@
             </form>
           @else
             <form action="/ShoppingCart/add/{{$product['id']}}">
-              <button class="btn" type="submit" name="action" value="addToCart">Добавить в корзину</button>
+              <button id='addToCart' class="btn" type="submit" name="action" value="addToCart">Добавить в корзину</button>
             </form>
           @endif
         </td>
       </tr>
       @if (Auth::check())
+      <tr>
+        <td colspan='2'>
+          @if ($inFavorites)
+            <form action='{{route('deleteFavorites', $product->id)}}' method='POST'>
+              @csrf
+              <button class='btn' type='submit' name='action' value='deleteFavorites'>Удалить из списка любимого</button>
+            </form>
+          @else
+            <form action='{{route('addFavorites', $product->id)}}' method='POST'>
+              @csrf
+              <button class='btn' type='submit' name='action' value='addFavorites'>Добавить в список любимого</button>
+            </form>
+          @endif
+          </form>
+        </td>
+      </tr>
         <tr>
           <td colspan="2">
             <form method="POST" class="form-inline justify-content-center" action="/buyProduct">
@@ -119,7 +136,7 @@
           @endforelse
             <tr>
               <td colspan="4">
-                @if (!$isInShoppingList)
+                @if (!$inShoppingList)
                   Чтобы оставить отзыв, приобретите товар<br><br>
                 @elseif ($product->reviews()->where('user_id', Auth::user()['id'])->where('product_id', $product['id'])->first())
                   Для управления оставленными отзывами, перейдите в личный кабинет<br>todo<br><br>
@@ -157,5 +174,16 @@
 
       </tbody>
     </table>
+    {{-- <script>
+      $('#addToCart').bind('click', function() {
+        fetch('http://127.0.0.1:8000/ShoppingCart/add/' + $('#productId').attr('value'))
+          .then((response) => {
+            return response.text();
+          })
+          .then((data) => {
+            console.log(data);
+          });
+      })
+    </script> --}}
   </div>
 @endsection

@@ -47,4 +47,17 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->status === 'admin' or $this->status === 'root';
     }
+    public function buyProduct(Product $product, int $quantity)
+    {
+        
+    }
+    public function getAddress()
+    {
+        return Addresses::where('user_id', $this->id)->first();
+    }
+    public function hasProductInFavorites($productId)
+    {
+        return Favorites::where('user_id', $this->id)->where('product_id', $productId)->first()
+            ? true : false;
+    }
 }

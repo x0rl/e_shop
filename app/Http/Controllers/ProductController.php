@@ -2,38 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewDiscount;
 use App\Http\Requests\AddReviewRequest;
 use App\Http\Requests\EditProductRequest;
+use App\Jobs\DiscountNotification;
 use App\Models\Comment;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ShoppingList;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewDiscount as MailNewDiscount;
 
 class ProductController extends Controller
 {
     public function index(Request $request, $productId) 
     {
         $product = Product::findOrFail($productId);
-        if (Auth::check()) {
-            $inShoppingList = ShoppingList::where('product_id', $productId)->where('user_id', Auth::user()['id'])->first()
-                ? true : false;
-        } else {
-            $inShoppingList = false;
-        }
+        $inShoppingList = ShoppingCartController::isProductInShoppingList($productId); //todo
+        $inShoppingCart = ShoppingCartController::isProductInShoppingCart($productId);
+        $inFavorites = Auth::user()->hasProductInFavorites($productId);
         if ($request->show === 'reviews') {
             $reviews = $product->reviews()->paginate(5); //todo сортировку
+            $comments = null; //todo
         } else {
             $comments = $product->comments()->paginate(5); //todo сортировку по оценке (1 или 2 или 3 и т.д), по дате
+            $reviews = null;
         }
-        return view('e_shop.product-page', [
-            'product' => $product,
-            'inShoppingCart' => ShoppingCartController::isProductInShoppingCart($productId), 
-            'isInShoppingList' => $inShoppingList,
-            'comments' => $comments ?? null,
-            'reviews' => $reviews ?? null,
-        ]);
+        return view('e_shop.product-page', compact('product',  'inShoppingCart', 'inShoppingList', 'comments', 'reviews', 'inFavorites'));
     }
     public function delete(Request $request, $productId)
     {
@@ -49,6 +46,9 @@ class ProductController extends Controller
     public function edit(EditProductRequest $request, $productId)
     {
         $targetProduct = Product::findOrFail($productId);
+        if ($targetProduct->discount < $request->discount) {
+            DiscountNotification::dispatch($targetProduct);
+        }
         $targetProduct->fill($request->validated());
         $targetProduct->save();
         $request->session()->flash('message', [

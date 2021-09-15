@@ -20,6 +20,9 @@ use App\Models\Product;
 Route::fallback(function () {
     abort(404);
 });
+Route::get('/testCart', function() {
+    return 'yes. /testcart!!!!!!!1';
+});
 Route::get('/amo', 'AmoCRM@test');
 Route::get('/', 'PageController@showMainPage');
 Route::get('/about', function() {
@@ -51,12 +54,15 @@ Route::get('/subCategory/{page}', 'PageController@showCategory')->name('showCate
 Route::middleware('auth')->group(function() {
     Route::post('/product/{productId}/addReview', 'ProductController@addReview')->name('addReview');
     Route::post('/product/{productId}/addComment', 'ProductController@addComment');
+    Route::post('/product/{productId}/addFavorites', 'FavoriteController@add')->name('addFavorites');
+    Route::post('/product/{productId}/deleteFavorites', 'FavoriteController@delete')->name('deleteFavorites');
     Route::post('/buyProduct', 'BuyProductController@index');
     Route::post('/buyProduct/submit', 'BuyProductController@store')->name('SubmitPurchase');
     Route::get('/personal_area/reviews', 'PersonalAreaController@reviews');
     Route::get('/personal_area/shoppingList', 'PersonalAreaController@shoppingList');
     Route::get('/personal_area', 'PersonalAreaController@mainPage');
-    Route::get('/personal_area/profile', 'PersonalAreaController@profile');
+    Route::get('/personal_area/profile', 'PersonalAreaController@profile')->name('profile');
+    Route::post('/personal_area/profile/edit/address', 'PersonalAreaController@editAddress')->name('editAddress');
 });
 
 Route::get('/dashboard', function () {

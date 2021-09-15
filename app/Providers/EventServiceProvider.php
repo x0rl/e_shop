@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\BuyProduct;
+use App\Events\NewDiscount;
 use App\Events\SendedToAmoCRM;
+use App\Listeners\SendDiscountNotification;
 use App\Listeners\SendNotification;
 use App\Listeners\SendToAmoCRM;
 use Illuminate\Auth\Events\Registered;
@@ -25,6 +27,9 @@ class EventServiceProvider extends ServiceProvider
         BuyProduct::class => [
             SendToAmoCRM::class,
         ],
+        NewDiscount::class => [
+            SendDiscountNotification::class,
+        ]
     ];
 
     /**

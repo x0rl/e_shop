@@ -1,5 +1,6 @@
 @section('title', 'Список покупок')
 @section('content')
+  @include('e_shop.layouts.breadcrumbs-personal-area')
   <h2>Список покупок</h2>
   @if (count($shoppingList) == 0)
     <br>Пока вы не приобрели ни одного товара

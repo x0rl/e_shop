@@ -36,6 +36,9 @@
         <td><input class="form-control" type="number" name="quantity" max="9999"  value="{{$product['quantity']}}"></td>
       </tr>
       <tr>
+        <td>Скидка: </td>
+        <td><input class='form-control' type='number' name='discount' max='100' min='1' value="{{$product['discount']}}"></td>
+      <tr>
         <td colspan="2"><input class="btn btn-outline-secondary" type="submit" name="submit" value="Сохранить"></td>
       </tr>
       </tbody>

@@ -29,8 +29,8 @@ class NewProductController extends Controller
         $request->session()->flash('message', [
             'type' => 'success',
             'text' => 'Успешно добавлено!']);
-        // if (!AdminPanel::where('responsible_category', $newProduct->sub_category_id)->first()) //todo выключить двухфакторку (либо фикс метода) и расскомментировать
-        //   Mail::to(env('ADMIN_EMAIL'))->queue(new AbsentResponsibleAdmin(Auth::user(), $newProduct, $_SERVER['SERVER_NAME'].'/product/'.$newProduct->id));
+        if (!AdminPanel::where('responsible_category', $product->sub_category_id)->first()) //todo выключить двухфакторку (либо фикс метода) и расскомментировать
+          Mail::to(config('mail.from.address'))->queue(new AbsentResponsibleAdmin(Auth::user(), $product, $_SERVER['SERVER_NAME'].'/product/'.$product->id));
         return redirect()->route('showCategory', ['page' => $request->sub_category_id]);
     }
 }

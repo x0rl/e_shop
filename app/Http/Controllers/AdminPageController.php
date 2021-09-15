@@ -40,16 +40,16 @@ class AdminPageController extends Controller
                 $targetUser->ban_status = date('d:m:y', time());
                 $targetUser->save();
                 $message = [
-                    'type'=>'success',
-                    'text'=>'Пользователь с ником '.$targetUser['name'].' успешно заблокирован'
+                    'type' => 'success',
+                    'text' => 'Пользователь с ником '.$targetUser['name'].' успешно заблокирован'
                 ];
                 break;
             case 'unban':
                 $targetUser->ban_status = null;
                 $targetUser->save();
                 $message = [
-                    'type'=>'success',
-                    'text'=>'Пользователь с ником '.$targetUser['name'].' успешно разблокирован'
+                    'type' => 'success',
+                    'text' => 'Пользователь с ником '.$targetUser['name'].' успешно разблокирован'
                 ];
                 break;
             case 'upToAdmin':
@@ -61,8 +61,8 @@ class AdminPageController extends Controller
                 // $adminPanel->admin_login = $targetUser->name;
                 // $adminPanel->save(); todo!
                 $message = [
-                    'type'=>'success',
-                    'text'=>'Пользователь с ником '.$targetUser['name'].' повышен до админа'
+                    'type' => 'success',
+                    'text' => 'Пользователь с ником '.$targetUser['name'].' повышен до админа'
                 ];
                 break;
             case 'downToUser':
@@ -73,8 +73,8 @@ class AdminPageController extends Controller
                 // if ($user = AdminPanel::where('admin_id', $targetUser->id))
                 //   $user->delete(); todo!
                 $message = [
-                    'type'=>'success',
-                    'text'=>'Пользователь с ником '.$targetUser['name'].' понижен до пользователя'
+                    'type' => 'success',
+                    'text' => 'Пользователь с ником '.$targetUser['name'].' понижен до пользователя'
                 ];
                 break;
             default:
