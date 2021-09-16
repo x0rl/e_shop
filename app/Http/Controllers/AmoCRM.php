@@ -22,6 +22,6 @@ use Illuminate\Support\Facades\Auth;
 class AmoCRM extends Controller
 {
 	public function test() {
-		return '1';
+		return config('amoCRM.redirectURI');
 	}
 }

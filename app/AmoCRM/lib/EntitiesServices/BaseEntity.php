@@ -1,109 +1,143 @@
 <?php
 namespace EntitiesServices;
 
-use Client\ApiRequest;
+use Client\ApiClient;
 
 abstract class BaseEntity
 {
-  protected $apiRequest;
-  protected $curlParams;
+    protected $apiClient;
+    protected $curlParams;
 
-  abstract function getMethod();
-  abstract function getBaseDomain();
-  abstract function getEntity();
-
-  public function __construct(ApiRequest $request) 
-  {
-    $this->apiRequest = $request;
-  }
-  public function getCurlParams() 
-  {
-    return $this->curlParams;
-  }
-  public function all() 
-  {
-    $request = $this->apiRequest->sendRequest($this->getMethod(), $this->getCurlParams(), $this->getBaseDomain());
-    return json_decode($request, true);
-  }
-  public function get(int $id, string $with = null) 
-  {
-    // ['catalog_elements', 'contacts']
-    if ($with)
-      $method = $this->method . "/$id?with=$with";
-    else
-      $method = $this->method . "/$id";
-    $request = $this->apiRequest->sendRequest($method, $this->getCurlParams(), $this->getBaseDomain());
-    return json_decode($request);
-  }
-  public function add($object) 
-  {
-    $customCurlParams = array(
-      CURLOPT_HEADER => false,
-      CURLOPT_CUSTOMREQUEST => 'POST',
-      CURLOPT_POSTFIELDS => json_encode($object->toApi())
-    );
-    $request = $this->apiRequest->sendRequest($this->getMethod(), $customCurlParams + $this->getCurlParams(), $this->getBaseDomain());
-    return json_decode($request, true)['_embedded'][$this->getEntity()][0];
-  }
-  public function getNote($entityId) 
-  {
-    $request = $this->apiRequest->sendRequest("api/v4/".$this->getEntity()."/$entityId/notes", $this->getCurlParams(), $this->getBaseDomain());
-    return json_decode($request, true);
-  }
-  public function addNote(int $entityId, string $text) 
-  {
-    $data = [
-      [
-        'note_type' => 'common',
-        'params' => [
-          'text' => $text
-        ]
-      ]
-    ];
-    $customCurlParams = array(
-      CURLOPT_HEADER => false,
-      CURLOPT_CUSTOMREQUEST => 'POST',
-      CURLOPT_POSTFIELDS => json_encode($data)
-    );
-    $request = $this->apiRequest->sendRequest("api/v4/".$this->getEntity()."/$entityId/notes", $this->getCurlParams() + $customCurlParams, $this->getBaseDomain());
-    return json_decode($request, true);
-  }
-  public function addTask($entityId, $taskText, $completeSeconds) 
-  {
-    $data = [
-      [
-        'entity_id' => $entityId,
-        'entity_type' => $this->entity,
-        'text' => $taskText,
-        'complete_till' => time() + $completeSeconds
-      ]
-    ];
-    $customCurlParams = array(
-      CURLOPT_HEADER => false,
-      CURLOPT_CUSTOMREQUEST => 'POST',
-      CURLOPT_POSTFIELDS => json_encode($data)
-    );
-    $request = $this->apiRequest->sendRequest('/api/v4/tasks', $this->getCurlParams() + $customCurlParams, $this->getBaseDomain());
-    return json_decode($request);
-  }
-  public function updateOne($data) 
-  {
-    foreach ($data->custom_fields_values as $key => $value) { // крч нулл в объекте рисует когда его получаю, а обратно его же принимать НЕ ХОЧЕТ
-      foreach ($value->values as $item) {
-        if (property_exists($item, 'enum_code'))
-          unset($item->enum_code);
-      }
+    public function __construct(ApiClient $apiClient) 
+    {
+        $this->apiClient = $apiClient;
+        $this->curlParams = array(CURLOPT_HTTPHEADER => [
+            "Content-Type: application/json"
+        ]);
     }
-    //echo '<h1>updateOne $data</h1>';
-    //var_dump($data);
-    $customCurlParams = array(
-      CURLOPT_HEADER => false,
-      CURLOPT_CUSTOMREQUEST => 'PATCH',
-      CURLOPT_POSTFIELDS => json_encode([$data])
-    );
-    //var_dump($data->custom_fields_values[0]->values);
-    //var_dump($customCurlParams);
-    $request = $this->apiRequest->sendRequest($this->getMethod(), $customCurlParams + $this->getCurlParams(), $this->getBaseDomain());
-    return json_decode($request, true);
-  }
+    public function getModel() 
+    {
+        return $this->model;
+    }
+    public function getMethod()
+    {
+        return $this->method;
+    }
+    public function getEntity()
+    {
+        $class_parts = explode('\\', get_class($this));
+        return lcfirst(end($class_parts));
+    }
+    public function getCurlParams() 
+    {
+        return $this->curlParams;
+    }
+    public function all() 
+    {
+        $customCurlParams = array(CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $this->apiClient->getAccessToken()['access_token']
+        ]);
+        $request = $this->apiClient->sendRequest($this->getMethod(), $customCurlParams + $this->getCurlParams());
+        return json_decode($request, true);
+    }
+    public function get(int $id, string $with = null) 
+    {
+        if ($with) {
+            $method = $this->method . "/$id?with=$with";
+        } else {
+            $method = $this->method . "/$id";
+        }
+        $customCurlParams = array(CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $this->apiClient->getAccessToken()['access_token']
+        ]);
+        $request = $this->apiClient->sendRequest($method, $customCurlParams + $this->getCurlParams());
+        $model = $this->getModel();
+        return new $model(json_decode($request));
+    }
+    public function add($object) 
+    {
+        $customCurlParams = array(
+            CURLOPT_HEADER => false,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($object->toApi()),
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $this->apiClient->getAccessToken()['access_token']
+            ]
+        );
+        $request = $this->apiClient->sendRequest($this->getMethod(), $customCurlParams + $this->getCurlParams());
+        return json_decode($request, true)['_embedded'][$this->getEntity()][0];
+    }
+    public function updateOne($data) 
+    {
+        foreach ($data->custom_fields_values as $key => $value) { 
+            foreach ($value->values as $item) {
+            if (property_exists($item, 'enum_code'))
+                unset($item->enum_code);
+            }
+        }
+        $customCurlParams = array(
+            CURLOPT_HEADER => false,
+            CURLOPT_CUSTOMREQUEST => 'PATCH',
+            CURLOPT_POSTFIELDS => json_encode([$data]),
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $this->apiClient->getAccessToken()['access_token']
+            ]
+        );
+        $request = $this->apiClient->sendRequest($this->getMethod(), $customCurlParams + $this->getCurlParams());
+        return json_decode($request, true);
+    }
+    public function getNote($entityId) 
+    {
+        $customCurlParams = array(CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $this->apiClient->getAccessToken()['access_token']
+        ]);
+        $request = $this->apiClient->sendRequest(
+            "api/v4/" . $this->getEntity() . "/$entityId/notes", 
+            $customCurlParams + $this->getCurlParams()
+        );
+        return json_decode($request, true)['_embedded']['notes'][0];
+    }
+    public function addNote(int $entityId, string $text) 
+    {
+        $data = [
+            [
+                'note_type' => 'common',
+                'params' => ['text' => $text]
+            ]
+        ];
+        $customCurlParams = array(
+            CURLOPT_HEADER => false,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $this->apiClient->getAccessToken()['access_token']
+            ]
+        );
+        $request = $this->apiClient->sendRequest(
+            "api/v4/" . $this->getEntity() . "/$entityId/notes",
+            $this->getCurlParams() + $customCurlParams
+        );
+        return json_decode($request, true);
+    }
+    public function addTask($entityId, $taskText, $completeSeconds) 
+    {
+        $data = [
+            [
+                'entity_id' => $entityId,
+                'entity_type' => $this->entity,
+                'text' => $taskText,
+                'complete_till' => time() + $completeSeconds
+            ]
+        ];
+        $customCurlParams = array(
+            CURLOPT_HEADER => false,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => [
+                'Authorization: Bearer ' . $this->apiClient->getAccessToken()['access_token']
+            ]
+        );
+        $request = $this->apiClient->sendRequest('/api/v4/tasks', $this->getCurlParams() + $customCurlParams);
+        return json_decode($request);
+    }
 }

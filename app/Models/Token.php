@@ -12,4 +12,14 @@ class Token extends Model
     public $timestamps = false;
     
     protected $table = 'token';
+
+    public function getTokenAttribute($value)
+    {
+        return $value->toArray();
+    }
+
+    public function setTokenAttribute($value)
+    {
+        $this->attributes['token'] = $value->toJson();
+    }
 }
