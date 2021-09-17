@@ -11,6 +11,10 @@ class Comment extends Model
 
     protected $table = 'comments';
 
+    protected $fillable = [
+        'text'
+    ];
+
     public function user() 
     {
         return $this->hasOne('App\Models\User', 'id', 'user_id');

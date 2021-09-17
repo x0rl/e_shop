@@ -40,6 +40,15 @@
           </div>
         </li>
       @endif
+      <li>
+        <div class="nav-item active">
+          @if ($messageCount)
+            <a class='nav-link' href='{{route('mail')}}'>Почта ({{$messageCount}})</a>
+          @else
+            <a class='nav-link' href='{{route('mail')}}'>Почта</a>
+          @endif
+        </div>
+      </li>
       <span class="navbar-text">
         Баланс: {{number_format(Auth::user()['money'], 2, ',', '.')}}
       </span>

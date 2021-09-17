@@ -17,7 +17,7 @@ class PersonalAreaController extends Controller
 {
     public function profile()
     {
-        return view('e_shop.profile', [
+        return view('e_shop.edit-profile', [
             'emailVerified' => Auth::user()['email_verified_at'] ?? false,
             'address' => Auth::user()->getAddress()
         ]);
@@ -48,7 +48,7 @@ class PersonalAreaController extends Controller
         if ($request->expectsJson()) {
             return 'Адрес доставки успешно изменен';
         } else {
-            return redirect()->route('profile');
+            return redirect()->route('edit.profile');
         }
     }
 }

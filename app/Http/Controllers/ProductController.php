@@ -78,7 +78,7 @@ class ProductController extends Controller
     public function addComment(Request $request, $productId) 
     {
         $request->validate(['comment' => 'required|string|min:5|max:255']);
-        $comment = Comment::create($request->validated());
+        $comment = Comment::create(['text' => $request->comment]);
         $comment->product_id = $productId;
         $comment->user_id = Auth::user()['id'];
         $comment->save();

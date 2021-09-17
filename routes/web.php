@@ -52,6 +52,9 @@ Route::get('/product/{product}', 'ProductController@index')->name('showProduct')
 Route::get('/subCategory/{page}', 'PageController@showCategory')->name('showCategory');
 
 Route::middleware('auth')->group(function() {
+    Route::get('/mail', 'MailController@index')->name('mail');
+    Route::get('/mail/{to}', 'MailController@dialog')->name('mail.dialog');
+    Route::post('/mail/{to}/sendMessage', 'MailController@sendMessage')->name('mail.dialog.sendMessage');
     Route::post('/product/{productId}/addReview', 'ProductController@addReview')->name('addReview');
     Route::post('/product/{productId}/addComment', 'ProductController@addComment');
     Route::post('/product/{productId}/addFavorites', 'FavoriteController@add')->name('addFavorites');
@@ -61,8 +64,9 @@ Route::middleware('auth')->group(function() {
     Route::get('/personal_area/reviews', 'PersonalAreaController@reviews');
     Route::get('/personal_area/shoppingList', 'PersonalAreaController@shoppingList');
     Route::get('/personal_area', 'PersonalAreaController@mainPage');
-    Route::get('/personal_area/profile', 'PersonalAreaController@profile')->name('profile');
+    Route::get('/personal_area/profile', 'PersonalAreaController@profile')->name('edit.profile');
     Route::post('/personal_area/profile/edit/address', 'PersonalAreaController@editAddress')->name('editAddress');
+    Route::get('/profile/{userId}', 'ProfileController@index')->name('profile');
 });
 
 Route::get('/dashboard', function () {

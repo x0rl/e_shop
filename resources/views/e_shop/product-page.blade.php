@@ -79,6 +79,15 @@
       <thead>
       <tr>
       <td colspan="3">
+        @if ($errors->any())
+          <div>
+              <div class="mt-3 text-sm text-red-600">
+                  @foreach ($errors->all() as $error)
+                      {{ $error }}<br><br>
+                  @endforeach
+              </div>
+          </div>
+        @endif
         <ul class="nav nav-tabs">
           <li class="nav-item">
             @if (isset($comments))
@@ -99,7 +108,7 @@
         @if (isset($comments))
           @forelse ($comments as $comment)
             <tr>
-              <td width="20%">{{$comment->user['name']}}</td>
+              <td width="20%"><a href='{{route('profile', $comment->user->id)}}'>{{$comment->user['name']}}</a></td>
               <td>{{$comment['text']}}</td>
               <td width="28%">{{$comment['created_at']}}</td>
             </tr>

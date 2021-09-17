@@ -71,8 +71,9 @@ abstract class BaseEntity
     {
         foreach ($data->custom_fields_values as $key => $value) { 
             foreach ($value->values as $item) {
-            if (property_exists($item, 'enum_code'))
-                unset($item->enum_code);
+                if (property_exists($item, 'enum_code')) {
+                    unset($item->enum_code);
+                }
             }
         }
         $customCurlParams = array(

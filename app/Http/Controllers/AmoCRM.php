@@ -7,6 +7,7 @@ use App\Jobs\SalesReport;
 use App\Jobs\SalesReportWeekly;
 use App\Mail\AbsentResponsibleAdmin;
 use App\Mail\SalesReportWeekly as MailSalesReportWeekly;
+use App\Models\Message;
 //use App\Mail\Test;
 use App\Models\Token;
 use Client\ApiClient;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\Auth;
 class AmoCRM extends Controller
 {
 	public function test() {
-		return config('amoCRM.redirectURI');
+		$message = Message::find(5);
+		return $message->message;
+		return '1';
 	}
 }
