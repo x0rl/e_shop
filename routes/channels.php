@@ -3,6 +3,7 @@
 use App\Models\ShoppingList;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Log;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,11 +15,11 @@ use Illuminate\Support\Facades\Broadcast;
 | used to check if an authenticated user can listen to the channel.
 |
 */
-
-Broadcast::channel('users.{userId}', function ($user, $userId) {
-    //return (int) $user->id == (int) $userId;
-    return true; //todo
+Broadcast::channel('chat.{to}.{from}', function ($user, $to, $from) {
+    Log::debug($user->id . ' - ' . $user->name . '; to: ' . $to);
+    return true; // todo
+    //return (int) $user->id == (int) $to;
 });
-// Broadcast::channel('users.{id}', function ($user, $userId) {
-//     return $userId === ShoppingList::where('product_id', $product->id)->where('user_id', $userId)->user_id;
-// });
+Broadcast::channel('new-message.{userId}', function ($user, $userId) {
+    return $userId == $user->id;
+});

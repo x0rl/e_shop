@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Message extends Model
 {
@@ -39,7 +40,8 @@ class Message extends Model
     {
         return Message::messageFromUser($userId)
             ->orWhere->messageToUser($userId)
-            ->get();
+            ->latest()
+            ->paginate(10);
     }
     public static function markMessageAsRead($userId)
     {

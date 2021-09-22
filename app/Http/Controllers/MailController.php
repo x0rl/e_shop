@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewMessage;
 use App\Http\Requests\SendMessageRequest;
 use Illuminate\Http\Request;
 use App\Models\Message;
@@ -29,6 +30,7 @@ class MailController extends Controller
         $message->from = Auth::user()->id;
         $message->to = $to;
         $message->save();
-        return back();
+        NewMessage::dispatch($to, Auth::user(), $message);//Auth::user()->id, $message->message);
+        //return 'success';
     }
 }

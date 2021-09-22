@@ -4,6 +4,8 @@ use App\Models\SubCategory;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 use App\Models\Product;
+use Illuminate\Http\Request;
+use App\Models\Message;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +26,7 @@ Route::get('/testCart', function() {
     return 'yes. /testcart!!!!!!!1';
 });
 Route::get('/amo', 'AmoCRM@test');
-Route::get('/', 'PageController@showMainPage');
+Route::get('/', 'PageController@showMainPage')->name('home');
 Route::get('/about', function() {
     return view('e_shop.about');
 });
@@ -67,6 +69,9 @@ Route::middleware('auth')->group(function() {
     Route::get('/personal_area/profile', 'PersonalAreaController@profile')->name('edit.profile');
     Route::post('/personal_area/profile/edit/address', 'PersonalAreaController@editAddress')->name('editAddress');
     Route::get('/profile/{userId}', 'ProfileController@index')->name('profile');
+    Route::get('/markMessagesAsRead', function(Request $request) {
+        Message::markMessageAsRead($request->from);
+    })->name('markMessagesAsRead');
 });
 
 Route::get('/dashboard', function () {
